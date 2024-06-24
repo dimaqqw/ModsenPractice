@@ -6,9 +6,19 @@ exports.authenticate = async (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'No token provided' })
 
   try {
-    const decoded = jwt.verify(token, 'asdasdqwedchasdbfnaf123')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.user = await User.findByPk(decoded.id)
     next()
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid token' })
+  }
+}
+
+exports.organizerGuard = async (req, res, next) => {
+  try {
+    req.user.role == 'organizer'
+      ? next()
+      : res.status(403).json({ message: 'Forbidden' })
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' })
   }

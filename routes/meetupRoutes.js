@@ -6,14 +6,14 @@ const {
   updateMeetup,
   deleteMeetup,
 } = require('../controllers/meetupController')
-const { authenticate } = require('../middleware/authMiddleware')
+const { authenticate, organizerGuard } = require('../middleware/authMiddleware')
 
 const router = express.Router()
 
 router.get('/meetups', getAllMeetups)
 router.get('/meetups/:id', getMeetupById)
-router.post('/meetups', authenticate, createMeetup)
-router.patch('/meetups/:id', authenticate, updateMeetup)
-router.delete('/meetups/:id', authenticate, deleteMeetup)
+router.post('/meetups', authenticate, organizerGuard, createMeetup)
+router.patch('/meetups/:id', authenticate, organizerGuard, updateMeetup)
+router.delete('/meetups/:id', authenticate, organizerGuard, deleteMeetup)
 
 module.exports = router

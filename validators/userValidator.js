@@ -18,9 +18,9 @@ const userSchema = Joi.object({
     'string.max': 'Password must be less than or equal to 100 characters long',
     'any.required': 'Password is required',
   }),
-  role: Joi.string().valid('user', 'admin').default('user').messages({
+  role: Joi.string().valid('user', 'organizer').default('user').messages({
     'string.base': 'Role must be a string',
-    'any.only': 'Role must be either user or admin',
+    'any.only': 'Role must be either user or organizer',
   }),
 })
 
