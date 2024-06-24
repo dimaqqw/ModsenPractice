@@ -7,7 +7,7 @@ const Meetup = sequelize.define('Meetup', {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  name: {
+  title: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -19,11 +19,11 @@ const Meetup = sequelize.define('Meetup', {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: false,
   },
-  time: {
+  date: {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  place: {
+  location: {
     type: DataTypes.STRING,
     allowNull: false,
   },

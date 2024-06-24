@@ -15,7 +15,6 @@ exports.getMeetupById = async (req, res) => {
 exports.createMeetup = async (req, res) => {
   const { error } = meetupSchema.validate(req.body)
   if (error) return res.status(400).json({ error: error.details[0].message })
-
   const meetup = await Meetup.create({ ...req.body, organizerId: req.user.id })
   res.status(201).json(meetup)
 }

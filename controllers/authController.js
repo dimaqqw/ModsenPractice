@@ -1,3 +1,4 @@
+require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { User } = require('../models')
@@ -8,7 +9,7 @@ exports.register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10)
   const user = await User.create({ username, password: hashedPassword })
 
-  const token = jwt.sign({ id: user.id }, 'asdasdqwedchasdbfnaf123', {
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
     expiresIn: '1h',
   })
   res.status(201).json({ token })
@@ -22,7 +23,7 @@ exports.login = async (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' })
   }
 
-  const token = jwt.sign({ id: user.id }, 'asdasdqwedchasdbfnaf123', {
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
     expiresIn: '1h',
   })
   res.json({ token })
