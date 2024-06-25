@@ -1,4 +1,5 @@
 const { Meetup } = require('../models')
+const { Registration } = require('../models')
 const { Op } = require('sequelize')
 const { meetupSchema } = require('../validators/meetupValidator')
 
@@ -60,41 +61,121 @@ exports.getAllMeetups = async (req, res) => {
 
 exports.getMeetupById = async (req, res) => {
   const { id } = req.params
-  const meetup = await Meetup.findByPk(id)
-  if (!meetup) return res.status(404).json({ message: 'Meetup not found' })
-  res.json(meetup)
+
+  try {
+    const meetup = await Meetup.findByPk(id)
+    if (!meetup) {
+      return res.status(404).json({ message: 'Meetup not found' })
+    }
+    res.json(meetup)
+  } catch (error) {
+    console.error('Error fetching meetup by ID:', error)
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching the meetup.' })
+  }
 }
 
 exports.createMeetup = async (req, res) => {
-  const { error } = meetupSchema.validate(req.body)
-  if (error) return res.status(400).json({ error: error.details[0].message })
-  const meetup = await Meetup.create({ ...req.body, organizerId: req.user.id })
-  res.status(201).json(meetup)
+  try {
+    const { error } = meetupSchema.validate(req.body)
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message })
+    }
+
+    const meetup = await Meetup.create({
+      ...req.body,
+      organizerId: req.user.id,
+    })
+    res.status(201).json(meetup)
+  } catch (error) {
+    console.error('Error creating meetup:', error)
+    res
+      .status(500)
+      .json({ error: 'An error occurred while creating the meetup.' })
+  }
 }
 
 exports.updateMeetup = async (req, res) => {
   const { id } = req.params
-  const { error } = meetupSchema.validate(req.body)
-  if (error) return res.status(400).json({ error: error.details[0].message })
 
-  const meetup = await Meetup.findByPk(id)
-  if (!meetup) return res.status(404).json({ message: 'Meetup not found' })
+  try {
+    const { error } = meetupSchema.validate(req.body)
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message })
+    }
 
-  if (meetup.organizerId !== req.user.id)
-    return res.status(403).json({ message: 'Forbidden' })
+    const meetup = await Meetup.findByPk(id)
+    if (!meetup) {
+      return res.status(404).json({ message: 'Meetup not found' })
+    }
 
-  await meetup.update(req.body)
-  res.json(meetup)
+    if (meetup.organizerId !== req.user.id) {
+      return res.status(403).json({ message: 'Forbidden' })
+    }
+
+    await meetup.update(req.body)
+    res.json(meetup)
+  } catch (error) {
+    console.error('Error updating meetup:', error)
+    res
+      .status(500)
+      .json({ error: 'An error occurred while updating the meetup.' })
+  }
 }
 
 exports.deleteMeetup = async (req, res) => {
   const { id } = req.params
-  const meetup = await Meetup.findByPk(id)
-  if (!meetup) return res.status(404).json({ message: 'Meetup not found' })
 
-  if (meetup.organizerId !== req.user.id)
-    return res.status(403).json({ message: 'Forbidden' })
+  try {
+    const meetup = await Meetup.findByPk(id)
+    if (!meetup) {
+      return res.status(404).json({ message: 'Meetup not found' })
+    }
 
-  await meetup.destroy()
-  res.status(204).send()
+    if (meetup.organizerId !== req.user.id) {
+      return res.status(403).json({ message: 'Forbidden' })
+    }
+
+    await meetup.destroy()
+    res.status(204).send()
+  } catch (error) {
+    console.error('Error deleting meetup:', error)
+    res
+      .status(500)
+      .json({ error: 'An error occurred while deleting the meetup.' })
+  }
+}
+
+exports.signUpForMeetup = async (req, res) => {
+  const { meetupId } = req.body
+  const userId = req.user.id
+
+  try {
+    const existingSignup = await Registration.findOne({
+      where: {
+        userId: userId,
+        meetupId: meetupId,
+      },
+    })
+
+    if (existingSignup) {
+      return res
+        .status(400)
+        .json({ message: 'User is already signed up for this meetup.' })
+    }
+
+    const registration = await Registration.create({
+      userId: userId,
+      meetupId: meetupId,
+    })
+
+    res.status(201).json({
+      message: 'User successfully signed up for the meetup.',
+      registration,
+    })
+  } catch (error) {
+    console.error('Error signing up for meetup:', error)
+    res.status(500).json({ error: 'Could not sign up for the meetup.' })
+  }
 }
