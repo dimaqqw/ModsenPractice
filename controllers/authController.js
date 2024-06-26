@@ -32,6 +32,12 @@ exports.register = async (req, res) => {
   const refreshToken = generateRefreshToken(user)
   await user.update({ refreshToken })
 
+  res.cookie('accessToken', token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 1000,
+    sameSite: 'Strict',
+  })
+
   res.status(201).json({ token, refreshToken })
 }
 
@@ -47,6 +53,12 @@ exports.login = async (req, res) => {
   const refreshToken = generateRefreshToken(user)
 
   await user.update({ refreshToken })
+
+  res.cookie('accessToken', token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 1000,
+    sameSite: 'Strict',
+  })
 
   res.json({ token, refreshToken })
 }
@@ -68,6 +80,12 @@ exports.refreshToken = async (req, res) => {
     const newToken = generateAccessToken(user)
     const newRefreshToken = generateRefreshToken(user)
     await user.update({ refreshToken: newRefreshToken })
+
+    res.cookie('accessToken', newToken, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+      sameSite: 'Strict',
+    })
 
     res.json({ token: newToken, refreshToken: newRefreshToken })
   } catch (error) {
