@@ -36,6 +36,9 @@ const meetupSchema = Joi.object({
     'string.empty': 'Location is required',
     'any.required': 'Location is required',
   }),
+  organizerId: Joi.string()
+    .guid({ version: ['uuidv4'] })
+    .optional(),
 })
 
 module.exports = { meetupSchema }

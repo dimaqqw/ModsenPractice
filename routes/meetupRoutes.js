@@ -25,9 +25,6 @@ const router = express.Router()
  *     Meetup:
  *       type: object
  *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the meetup
  *         title:
  *           type: string
  *           description: The title of the meetup
@@ -46,14 +43,10 @@ const router = express.Router()
  *           items:
  *             type: string
  *           description: A list of tags associated with the meetup
- *         organizerId:
- *           type: string
- *           description: The ID of the user who is organizing the meetup
  *       required:
  *         - title
  *         - date
  *         - location
- *         - organizerId
  */
 
 /**
@@ -134,7 +127,7 @@ router.get('/meetups', getAllMeetups)
  *       - in: path
  *         name: id
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID of the meetup
  *     responses:
@@ -191,7 +184,7 @@ router.post('/meetups', authenticate, organizerGuard, createMeetup)
  *       - in: path
  *         name: id
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID of the meetup to update
  *     requestBody:
@@ -230,7 +223,7 @@ router.patch('/meetups/:id', authenticate, organizerGuard, updateMeetup)
  *       - in: path
  *         name: id
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID of the meetup to delete
  *     responses:
