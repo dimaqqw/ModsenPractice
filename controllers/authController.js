@@ -13,6 +13,16 @@ const generateRefreshToken = (user) => {
   })
 }
 
+const isValidPassword = async (password) => {
+  return await bcrypt.compare(password, user.password)
+}
+
+const checkAuth = async (user, password) => {
+  if (!user || !isValidPassword(password)) {
+    return res.status(401).json({ message: 'Invalid credentials' })
+  }
+}
+
 exports.register = async (req, res) => {
   const { username, password, role } = req.body
 
@@ -21,7 +31,7 @@ exports.register = async (req, res) => {
     return res.status(409).json({ message: 'Username already exists' })
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10)
+  const hashedPassword = await bcrypt.hash(password, process.env.PASS_SALT)
   const user = await User.create({
     username,
     password: hashedPassword,
@@ -45,10 +55,7 @@ exports.login = async (req, res) => {
   const { username, password } = req.body
   const user = await User.findOne({ where: { username } })
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ message: 'Invalid credentials' })
-  }
-
+  checkAuth(user, password)
   const token = generateAccessToken(user)
   const refreshToken = generateRefreshToken(user)
 
