@@ -4,13 +4,22 @@ const userSchema = Joi.object({
   id: Joi.string()
     .guid({ version: ['uuidv4'] })
     .optional(),
-  username: Joi.string().min(5).max(50).required().messages({
-    'string.base': 'Username must be a string',
-    'string.empty': 'Username is required',
-    'string.min': 'Username must be at least 5 characters long',
-    'string.max': 'Username must be less than or equal to 50 characters long',
-    'any.required': 'Username is required',
+  login: Joi.string().min(5).max(50).required().messages({
+    'string.base': 'Login must be a string',
+    'string.empty': 'Login is required',
+    'string.min': 'Login must be at least 5 characters long',
+    'string.max': 'Login must be less than or equal to 50 characters long',
+    'any.required': 'Login is required',
   }),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required()
+    .messages({
+      'string.base': 'Email must be a string',
+      'string.empty': 'Email is required',
+      'string.email': 'Email must be a valid email address',
+      'any.required': 'Email is required',
+    }),
   password: Joi.string().min(8).max(100).required().messages({
     'string.base': 'Password must be a string',
     'string.empty': 'Password is required',

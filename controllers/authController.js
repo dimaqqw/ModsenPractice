@@ -4,36 +4,48 @@ const bcrypt = require('bcryptjs')
 const { User } = require('../models')
 
 const generateAccessToken = (user) => {
-  return jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+  return jwt.sign(
+    { id: user.id, login: user.login, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  )
 }
 
 const generateRefreshToken = (user) => {
-  return jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: '7d',
-  })
+  return jwt.sign(
+    { id: user.id, login: user.login, email: user.email },
+    process.env.JWT_REFRESH_SECRET,
+    {
+      expiresIn: '7d',
+    }
+  )
 }
 
-const isValidPassword = async (password) => {
+const isValidPassword = async (password, user) => {
   return await bcrypt.compare(password, user.password)
 }
 
 const checkAuth = async (user, password) => {
-  if (!user || !isValidPassword(password)) {
+  if (!user || !isValidPassword(password, user)) {
     return res.status(401).json({ message: 'Invalid credentials' })
   }
 }
 
 exports.register = async (req, res) => {
-  const { username, password, role } = req.body
+  const { login, email, password, role } = req.body
 
-  const existingUser = await User.findOne({ where: { username } })
+  const existingUser = await User.findOne({ where: { login } })
   if (existingUser) {
-    return res.status(409).json({ message: 'Username already exists' })
+    return res.status(409).json({ message: 'Login already exists' })
   }
 
-  const hashedPassword = await bcrypt.hash(password, process.env.PASS_SALT)
+  const hashedPassword = await bcrypt.hash(
+    password,
+    parseInt(process.env.PASS_SALT, 10)
+  )
   const user = await User.create({
-    username,
+    login,
+    email,
     password: hashedPassword,
     role: role,
   })
@@ -52,8 +64,8 @@ exports.register = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-  const { username, password } = req.body
-  const user = await User.findOne({ where: { username } })
+  const { login, password } = req.body
+  const user = await User.findOne({ where: { login } })
 
   checkAuth(user, password)
   const token = generateAccessToken(user)
@@ -102,5 +114,7 @@ exports.refreshToken = async (req, res) => {
 
 exports.getCurrentUser = async (req, res) => {
   const user = await User.findByPk(req.user.id)
+  const userWithoutPassword = user.toJSON()
+  delete userWithoutPassword.password
   res.json(user)
 }

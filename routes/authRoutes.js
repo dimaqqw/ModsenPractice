@@ -31,7 +31,7 @@ const router = express.Router()
  * /api/register:
  *   post:
  *     summary: Register a new user
- *     description: Create a new user account with username and password.
+ *     description: Create a new user account with login and password.
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -40,15 +40,18 @@ const router = express.Router()
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               login:
+ *                 type: string
+ *               email:
  *                 type: string
  *               password:
  *                 type: string
  *               role:
  *                 type: string
  *             example:
- *               username: johndoe
- *               password: password123
+ *               login: dimaaqqw
+ *               email: dimaaqqw@mail.ru
+ *               password: dima1234
  *               role: user
  *     responses:
  *       '201':
@@ -64,7 +67,7 @@ router.post('/register', register)
  * /api/login:
  *   post:
  *     summary: Login user
- *     description: Authenticate user with username and password.
+ *     description: Authenticate user with login and password.
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -73,13 +76,13 @@ router.post('/register', register)
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               login:
  *                 type: string
  *               password:
  *                 type: string
  *             example:
- *               username: user1
- *               password: user1
+ *               login: dimaaqqw
+ *               password: dima1234
  *     responses:
  *       '200':
  *         description: User logged in successfully.
@@ -137,7 +140,7 @@ router.post('/refresh-token', refreshToken)
  *               properties:
  *                 id:
  *                   type: integer
- *                 username:
+ *                 login:
  *                   type: string
  *                 role:
  *                   type: string
