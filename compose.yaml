@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '3000:3000' # Порт вашего приложения на хосте:порт в контейнере
+      - '3000:3000'
     environment:
       DATABASE_URL: 'postgres://postgres:123456@db:5432/modsenpractice'
       JWT_SECRET: 'ModsenPracticeDenisenkoDmitriy'
