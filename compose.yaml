@@ -1,39 +1,34 @@
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
-
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
+version: '3'
 services:
-  server:
+  app:
     build:
       context: .
-    environment:
-      NODE_ENV: production
+      dockerfile: Dockerfile
     ports:
-      - 3000:3000
-
-    # The commented out section below is an example of how to define a PostgreSQL
-    # database that your application can use. `depends_on` tells Docker Compose to
-    # start the database before your application. The `db-data` volume persists the
-    # database data between container restarts. The `db-password` secret is used
-    # to set the database password. You must create `db/password.txt` and add
-    # a password of your choosing to it before running `docker-compose up`.
+      - '3000:3000' # Порт вашего приложения на хосте:порт в контейнере
+    environment:
+      DATABASE_URL: 'postgres://postgres:123456@db:5432/modsenpractice'
+      JWT_SECRET: 'ModsenPracticeDenisenkoDmitriy'
+      JWT_REFRESH_SECRET: 'ModsenPracticeDenisenkoDmitriyRefreshToken'
+      DB_USERNAME: 'postgres'
+      DB_PASSWORD: '123456'
+      DB_DATABASE: 'modsenpractice'
+      DB_HOST: 'db'
+      DB_PORT: '5432'
+      DB_DIALECT: 'postgres'
+      PASS_SALT: '10'
     depends_on:
-      - postgres
-  postgres:
+      - db
+  db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: modsenpractice
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: 'modsenpractice'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: '123456'
     ports:
       - '5438:5432'
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+  postgres_data:

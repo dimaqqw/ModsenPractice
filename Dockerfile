@@ -1,41 +1,19 @@
-# syntax=docker/dockerfile:1
+# Используем официальный образ Node.js версии LTS (14.x в настоящее время)
+FROM node:14
 
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
 
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
+# Копируем package.json и package-lock.json (или yarn.lock, если используете Yarn)
+COPY package*.json ./
 
-ARG NODE_VERSION=20.11.1
+# Устанавливаем зависимости проекта
+RUN npm install
 
-FROM node:${NODE_VERSION}-alpine
-
-# Use production node environment by default.
-ENV NODE_ENV production
-
-
-WORKDIR /usr/src/app
-
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.npm to speed up subsequent builds.
-# Leverage a bind mounts to package.json and package-lock.json to avoid having to copy them into
-# into this layer.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
-
-# Run the application as a non-root user.
-USER root
-RUN npx sequelize-cli db:migrate
-USER node
-
-# Copy the rest of the source files into the image.
-
+# Копируем все файлы проекта в текущую директорию внутри контейнера
 COPY . .
 
-# Expose the port that the application listens on.
-EXPOSE 3000
+# Опционально: если вам нужно выполнить какие-то дополнительные команды при сборке, добавьте их здесь
 
-# Run the application.
-CMD node app.js
+# Команда по умолчанию для запуска приложения
+CMD ["node", "app.js"]  # Замените на ваш главный файл приложения, если он называется иначе
