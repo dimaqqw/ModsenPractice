@@ -46,7 +46,7 @@
 ### 1. Клонирование репозитория
 
 ```sh
-git clone https://github.com/yourusername/yourrepository.git
+git clone https://github.com/dimaqqw/ModsenPractice.git
 cd yourrepository
 ```
 
