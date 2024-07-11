@@ -4,6 +4,10 @@ const findUserByLogin = async (login) => {
   return await User.findOne({ where: { login } })
 }
 
+const findUserByEmail = async (email) => {
+  return await User.findOne({ where: { email } })
+}
+
 const findUserById = async (id) => {
   return await User.findByPk(id)
 }
@@ -18,6 +22,7 @@ const updateUser = async (user, updateData) => {
 
 module.exports = {
   findUserByLogin,
+  findUserByEmail,
   findUserById,
   createUser,
   updateUser,

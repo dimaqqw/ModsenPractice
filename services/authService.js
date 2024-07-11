@@ -24,11 +24,12 @@ const isValidPassword = async (password, hashedPassword) => {
 }
 
 const registerUser = async (userData) => {
-  const { login, password } = userData
+  const { login, password, email } = userData
   const existingUser = await userRepository.findUserByLogin(login)
+  const existingUserEmail = await userRepository.findUserByEmail(email)
 
-  if (existingUser) {
-    throw new Error('Login already exists')
+  if (existingUser || existingUserEmail) {
+    throw new Error('Login or email already exists')
   }
 
   const hashedPassword = await bcrypt.hash(

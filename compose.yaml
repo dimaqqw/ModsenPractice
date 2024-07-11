@@ -7,16 +7,16 @@ services:
     ports:
       - '3000:3000'
     environment:
-      DATABASE_URL: 'postgres://postgres:123456@db:5432/modsenpractice'
-      JWT_SECRET: 'ModsenPracticeDenisenkoDmitriy'
-      JWT_REFRESH_SECRET: 'ModsenPracticeDenisenkoDmitriyRefreshToken'
-      DB_USERNAME: 'postgres'
-      DB_PASSWORD: '123456'
-      DB_DATABASE: 'modsenpractice'
-      DB_HOST: 'db'
-      DB_PORT: '5432'
-      DB_DIALECT: 'postgres'
-      PASS_SALT: '10'
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DIALECT: ${DB_DIALECT}
+      PASS_SALT: ${PASS_SALT}
     depends_on:
       - db
   db:
