@@ -47,7 +47,7 @@
 
 ```sh
 git clone https://github.com/dimaqqw/ModsenPractice.git
-cd yourrepository
+cd ModsenPractice
 ```
 
 ## Environment Variables
