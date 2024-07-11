@@ -50,7 +50,7 @@ git clone https://github.com/dimaqqw/ModsenPractice.git
 cd ModsenPractice
 ```
 
-## Environment Variables
+### 2. Environment Variables
 
 Создайте `.env` файл в корневой директории и добавьте следующие переменные окружения:
 
@@ -67,7 +67,23 @@ DB_PORT=5432
 DB_DIALECT='postgres'
 PASS_SALT=4
 ```
+### 3. config.json
+# В директории config создайте файл config.json со следующем содержимым
+```
+{
+  "development": {
+    "username": "postgres",
+    "password": "123456",
+    "database": "modsenpractice",
+    "host": "db",
+    "dialect": "postgres",
+    "port": "5432"
+  }
+}
 
+```
+
+### 4. Docker
 ```
 docker-compose up --build
 docker-compose exec app npx sequelize-cli db:migrate
